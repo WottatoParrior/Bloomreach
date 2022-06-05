@@ -1,3 +1,11 @@
+There might be a solution with trees, I tried using trees but I could not get the time complexity right with my approach so I tried something different
+
+
+
+
+
+
+
 # Project specification
 
 Finish implementation of a customer events analyzer. Analyzer should store in memory two
