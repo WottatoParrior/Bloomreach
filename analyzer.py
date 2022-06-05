@@ -37,16 +37,19 @@ class Analyzer:
             raise Exception("Event type needs to be string")
         if type(event.timestamp) is not int or event.timestamp < 0:
             raise Exception("Timestamp needs to be a positive integer")
-
+        # If there are no events just append the first one
         if len(self.events) == 0:
             self.events.append({
                 "customer_id": event.customer_id,
                 "event_type": event.event_type,
                 "timestamp": event.timestamp
             })
+        # Else iterate over the events and if the incoming event is older than
+        # the current one, place it before it
+        # Also make sure that the event belongs to the correct customer or there might be issues
         else:
-            for idx in range(0, len(self.events)):
 
+            for idx in range(0, len(self.events)):
                 if self.events[idx][
                         "timestamp"] > event.timestamp and self.events[idx][
                             "customer_id"] == event.customer_id:
@@ -86,14 +89,35 @@ class Analyzer:
         self.combinedEvents.pop()
 
     def calculate_funnel(self, funnel: Funnel) -> List[int]:
+        # Create the initial values for the output [0,0,0,0.....]
         values = [0] * len(funnel._steps)
 
+        # Initialize the customers information
         if len(self.customers) == 0:
             self.createCustomers()
+
+        # This is were things become interesting
+        # My purpose is to create an array like this [A,B,B,B,CustomerChange,B,C,A,B,CustomerChange,B,A,A......]
+        # This is representation is an idea from tree representations and traversals
+        # What I am doing is create a dictionary with info for each customer
+        # When I match the step with the event I store in the dictionary the index where the match happened
+        # and also the current iteration of the funnel step.
+
+        # Example: funnel_step 1 is 'A', my initial customer number is 1,
+        # when I traverse the array [A,B,B,B,CustomerChange,B,C,A,B...] I find A in index 0,
+        # I increase the value[0] since funnel_step 1 corresponds to value[0] in [0,0,0]
+        # and the dictionary becomes  {1 : lastIndex : 0, funnelStep : 1}
+        # now for the next values B,B,B there wont be any check for customer 1 since the funnelStep info
+        # has already been updated. After I encounter CustomerChange, I increment the customerNumber
+        # so the only values that will be updated now will be for customer 2 etc etc
+        # There is the danger that I match the indexo 0 again when i repeat the process for funnel_step 2
+        # so in order to bypass that I keep the lastIndex entry in dictionary. This entry remembers where the last
+        # match happened so we dont match again by accident
 
         if len(self.combinedEvents) == 0:
             self.createCombinedEventsList()
 
+        # Create dictionary entries for the amount of different customers
         noOfDifferentCustomers = self.combinedEvents.count(
             "CustomerChange") + 1
         helpDict = {}
@@ -101,32 +125,24 @@ class Analyzer:
         for helper in range(1, noOfDifferentCustomers + 1):
             helpDict[helper] = {"lastIndex": 0, "funnelStep": 0}
         i = 0
-        # print("Funnel steps are", funnel._steps)
-        # print("Combined events are", self.combinedEvents)
-        # This is linear in regards to customers, no matter how many customers we have
-        # the time complexity remains linear
+
+        # This is linear in regards to customers, no matter how many customers we have,
+        # the time complexity increases linearly.
 
         for step in funnel._steps:
-            eventIndex = 0
             customerNumber = 1
-            for event in range(0, len(self.combinedEvents)):
-                # print("Iteration is", i, "Dict is ", helpDict,
-                #       "Event Index is", eventIndex, "Step is", step,
-                #       "Event is", self.combinedEvents[event], "Values are",
-                #       values, "Customer Number is", customerNumber)
+            for idx, event in enumerate(self.combinedEvents):
 
-                if (self.combinedEvents[event] == step
-                    ) and (helpDict[customerNumber]["funnelStep"] == i) and (
-                        eventIndex >= helpDict[customerNumber]["lastIndex"]):
+                if (event == step) and (
+                        helpDict[customerNumber]["funnelStep"] == i) and (
+                            idx >= helpDict[customerNumber]["lastIndex"]):
                     values[i] += 1
-                    helpDict[customerNumber]["lastIndex"] = eventIndex + 1
+                    helpDict[customerNumber]["lastIndex"] = idx + 1
                     helpDict[customerNumber]["funnelStep"] += 1
 
-                if self.combinedEvents[event] == "CustomerChange":
+                if event == "CustomerChange":
                     customerNumber += 1
 
-                eventIndex += 1
             i += 1
-        # print("Final values are", values)
 
         return values

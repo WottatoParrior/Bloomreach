@@ -1,7 +1,6 @@
 from analyzer import Analyzer, Event, Funnel
 
 from unittest import TestCase
-import datetime
 
 
 class AnalyzerTest(TestCase):
@@ -19,56 +18,54 @@ class AnalyzerTest(TestCase):
         self.assertEqual([2, 1, 1],
                          analyzer.calculate_funnel(Funnel(["B", "C", "B"])))
 
-        analyzer2 = Analyzer()
-        analyzer2.add_event(Event("c1", "A", 1234))
-        analyzer2.add_event(Event("c1", "B", 1235))
-        analyzer2.add_event(Event("c1", "A", 1236))
-        analyzer2.add_event(Event("c1", "C", 1237))
+        analyzer = Analyzer()
+        analyzer.add_event(Event("c1", "A", 1234))
+        analyzer.add_event(Event("c1", "B", 1235))
+        analyzer.add_event(Event("c1", "A", 1236))
+        analyzer.add_event(Event("c1", "C", 1237))
 
-        self.assertEqual([1], analyzer2.calculate_funnel(Funnel(["A"])))
+        self.assertEqual([1], analyzer.calculate_funnel(Funnel(["A"])))
         self.assertEqual([1, 1, 1],
-                         analyzer2.calculate_funnel(Funnel(["A", "B", "C"])))
-        self.assertEqual([1, 1], analyzer2.calculate_funnel(Funnel(["A",
-                                                                    "A"])))
-        self.assertEqual([1, 0], analyzer2.calculate_funnel(Funnel(["C",
-                                                                    "B"])))
+                         analyzer.calculate_funnel(Funnel(["A", "B", "C"])))
+        self.assertEqual([1, 1], analyzer.calculate_funnel(Funnel(["A", "A"])))
+        self.assertEqual([1, 0], analyzer.calculate_funnel(Funnel(["C", "B"])))
         self.assertEqual([1, 1, 0],
-                         analyzer2.calculate_funnel(Funnel(["A", "A", "B"])))
+                         analyzer.calculate_funnel(Funnel(["A", "A", "B"])))
         self.assertEqual([0, 0, 0],
-                         analyzer2.calculate_funnel(Funnel(["X", "A", "B"])))
+                         analyzer.calculate_funnel(Funnel(["X", "A", "B"])))
 
-        analyzer3 = Analyzer()
-        analyzer3.add_event(Event("c1", "A", 1234))
-        analyzer3.add_event(Event("c1", "B", 1235))
-        analyzer3.add_event(Event("c1", "A", 1236))
-        analyzer3.add_event(Event("c1", "C", 1237))
-        analyzer3.add_event(Event("c2", "A", 1237))
-        analyzer3.add_event(Event("c2", "C", 1237))
-        analyzer3.add_event(Event("c2", "B", 1237))
+        analyzer = Analyzer()
+        analyzer.add_event(Event("c1", "A", 1234))
+        analyzer.add_event(Event("c1", "B", 1235))
+        analyzer.add_event(Event("c1", "A", 1236))
+        analyzer.add_event(Event("c1", "C", 1237))
+        analyzer.add_event(Event("c2", "A", 1237))
+        analyzer.add_event(Event("c2", "C", 1237))
+        analyzer.add_event(Event("c2", "B", 1237))
 
         self.assertEqual([2, 2, 1],
-                         analyzer3.calculate_funnel(Funnel(["A", "B", "C"])))
+                         analyzer.calculate_funnel(Funnel(["A", "B", "C"])))
         self.assertEqual([2, 1, 0],
-                         analyzer3.calculate_funnel(Funnel(["A", "A", "B"])))
+                         analyzer.calculate_funnel(Funnel(["A", "A", "B"])))
 
-        analyzer4 = Analyzer()
-        analyzer4.add_event(Event("c1", "A", 1234))
-        analyzer4.add_event(Event("c1", "B", 1235))
-        analyzer4.add_event(Event("c1", "A", 1236))
-        analyzer4.add_event(Event("c1", "C", 1237))
-        analyzer4.add_event(Event("c2", "A", 1234))
-        analyzer4.add_event(Event("c2", "B", 1235))
-        analyzer4.add_event(Event("c2", "A", 1236))
-        analyzer4.add_event(Event("c2", "C", 1237))
-        analyzer4.add_event(Event("c3", "A", 1234))
-        analyzer4.add_event(Event("c3", "B", 1235))
-        analyzer4.add_event(Event("c3", "A", 1236))
-        analyzer4.add_event(Event("c3", "C", 1237))
+        analyzer = Analyzer()
+        analyzer.add_event(Event("c1", "A", 1234))
+        analyzer.add_event(Event("c1", "B", 1235))
+        analyzer.add_event(Event("c1", "A", 1236))
+        analyzer.add_event(Event("c1", "C", 1237))
+        analyzer.add_event(Event("c2", "A", 1234))
+        analyzer.add_event(Event("c2", "B", 1235))
+        analyzer.add_event(Event("c2", "A", 1236))
+        analyzer.add_event(Event("c2", "C", 1237))
+        analyzer.add_event(Event("c3", "A", 1234))
+        analyzer.add_event(Event("c3", "B", 1235))
+        analyzer.add_event(Event("c3", "A", 1236))
+        analyzer.add_event(Event("c3", "C", 1237))
 
         self.assertEqual([3, 3, 3],
-                         analyzer4.calculate_funnel(Funnel(["A", "B", "C"])))
+                         analyzer.calculate_funnel(Funnel(["A", "B", "C"])))
         self.assertEqual([3, 3, 0],
-                         analyzer4.calculate_funnel(Funnel(["A", "A", "B"])))
+                         analyzer.calculate_funnel(Funnel(["A", "A", "B"])))
 
     def test_simple_add_event(self):
         #Test that add_event works properly for future proof reasons
