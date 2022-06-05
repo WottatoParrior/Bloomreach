@@ -15,6 +15,9 @@ class AnalyzerTest(TestCase):
         analyzer.add_event(Event("c1", "B", 1238))
         analyzer.add_event(Event("c1", "B", 1239))
         analyzer.add_event(Event("c2", "B", 1235))
+
+        print(analyzer.events)
+
         self.assertEqual([2, 1, 1],
                          analyzer.calculate_funnel(Funnel(["B", "C", "B"])))
 
@@ -165,4 +168,24 @@ class AnalyzerTest(TestCase):
         end_time = datetime.datetime.now()
         print("For 1.000.000", end_time - start_time)
 
-        # Time complexity looks good around 270ms vs 3.36 sec
+    # Time complexity looks good around 270ms vs 3.36 sec
+
+    def test_add_event_sorted(self):
+        analyzer = Analyzer()
+        analyzer.add_event(Event("c1", "A", 1234))
+        analyzer.add_event(Event("c1", "B", 1235))
+        analyzer.add_event(Event("c1", "C", 1236))
+
+        analyzer2 = Analyzer()
+        analyzer2.add_event(Event("c1", "C", 1236))
+        analyzer2.add_event(Event("c1", "B", 1235))
+        analyzer2.add_event(Event("c1", "A", 1234))
+
+        analyzer3 = Analyzer()
+        analyzer3.add_event(Event("c1", "B", 1235))
+        analyzer3.add_event(Event("c1", "A", 1234))
+        analyzer3.add_event(Event("c1", "C", 1236))
+
+        self.assertEqual(analyzer.events, analyzer2.events)
+        self.assertEqual(analyzer2.events, analyzer3.events)
+        self.assertEqual(analyzer.events, analyzer3.events)

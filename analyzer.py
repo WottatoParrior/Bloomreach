@@ -1,5 +1,7 @@
 from ast import Or
 from opcode import HAVE_ARGUMENT
+from pickle import FALSE
+from pydoc import doc
 from typing import List, Dict
 from collections import defaultdict
 
@@ -36,14 +38,32 @@ class Analyzer:
         if type(event.timestamp) is not int or event.timestamp < 0:
             raise Exception("Timestamp needs to be a positive integer")
 
-        self.events.append({
-            "customer_id": event.customer_id,
-            "event_type": event.event_type,
-            "timestamp": event.timestamp
-        })
-        pass
+        if len(self.events) == 0:
+            self.events.append({
+                "customer_id": event.customer_id,
+                "event_type": event.event_type,
+                "timestamp": event.timestamp
+            })
+        else:
+            for idx in range(0, len(self.events)):
 
-    graph = defaultdict(list)
+                if self.events[idx][
+                        "timestamp"] > event.timestamp and self.events[idx][
+                            "customer_id"] == event.customer_id:
+                    self.events.insert(
+                        idx, {
+                            "customer_id": event.customer_id,
+                            "event_type": event.event_type,
+                            "timestamp": event.timestamp
+                        })
+                    break
+                elif idx == (len(self.events) - 1):
+                    self.events.append({
+                        "customer_id": event.customer_id,
+                        "event_type": event.event_type,
+                        "timestamp": event.timestamp
+                    })
+        pass
 
     def cleanPlace(self):
         self.events = []
