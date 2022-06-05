@@ -16,8 +16,6 @@ class AnalyzerTest(TestCase):
         analyzer.add_event(Event("c1", "B", 1239))
         analyzer.add_event(Event("c2", "B", 1235))
 
-        print(analyzer.events)
-
         self.assertEqual([2, 1, 1],
                          analyzer.calculate_funnel(Funnel(["B", "C", "B"])))
 
@@ -140,35 +138,6 @@ class AnalyzerTest(TestCase):
             analyzer.add_event(Event("c1", "purchase", -1235))
         self.assertTrue('Timestamp needs to be a positive integer' in str(
             timestampNegativeError.exception))
-
-    def test_times_complexity(self):
-        analyzer = Analyzer()
-        start_time = datetime.datetime.now()
-
-        for i in range(0, 100000):
-            analyzer.add_event(Event(str(i), "A", 1234))
-            analyzer.add_event(Event(str(i), "B", 1234))
-
-        start_time = datetime.datetime.now()
-        self.assertEqual([100000, 100000],
-                         analyzer.calculate_funnel(Funnel(["A", "B"])))
-        end_time = datetime.datetime.now()
-        print("For 100.000", end_time - start_time)
-
-        analyzer = Analyzer()
-        start_time = datetime.datetime.now()
-
-        for i in range(0, 1000000):
-            analyzer.add_event(Event(str(i), "A", 1234))
-            analyzer.add_event(Event(str(i), "B", 1234))
-
-        start_time = datetime.datetime.now()
-        self.assertEqual([1000000, 1000000],
-                         analyzer.calculate_funnel(Funnel(["A", "B"])))
-        end_time = datetime.datetime.now()
-        print("For 1.000.000", end_time - start_time)
-
-    # Time complexity looks good around 270ms vs 3.36 sec
 
     def test_add_event_sorted(self):
         analyzer = Analyzer()

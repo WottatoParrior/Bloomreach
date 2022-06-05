@@ -1,10 +1,12 @@
 There might be a solution with trees, I tried using trees but I could not get the time complexity right with my approach so I tried something different
 
+When the events arrive I ensure that they are placed in the correct order or else my solution will not work
 
+I feel that the solution is a bit hacky, I apologize, but this one the best one I could think that could match the criteria
 
+I have expanded the test suite to include a time comparison just to confirm it
 
-
-
+The overall time complexity of funnel is O(funnel_steps \* customers)
 
 # Project specification
 

@@ -80,7 +80,7 @@ class Analyzer:
                 self.customers[cid] = [event_type]
 
     def createCombinedEventsList(self):
-        for key, value in self.customers.items():
+        for _, value in self.customers.items():
             self.combinedEvents.extend(value)
             self.combinedEvents.append("CustomerChange")
         self.combinedEvents.pop()
