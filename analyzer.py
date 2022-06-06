@@ -1,12 +1,5 @@
-from ast import Or
-from opcode import HAVE_ARGUMENT
-from pickle import FALSE
-from pydoc import doc
-from typing import List, Dict
-from collections import defaultdict
+from typing import List
 
-from numpy import number
-import json
 # eg : customers = { 1 : [1,2,3,4] , 2 : [5,6] , 7 : [9,10]}
 
 
