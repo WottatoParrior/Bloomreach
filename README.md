@@ -6,8 +6,6 @@ I feel that the solution is a bit hacky, I apologize, but this one the best one 
 
 I have expanded the test suite to include a time comparison just to confirm it
 
-The overall time complexity of funnel is O(funnel_steps \* customers)
-
 # Project specification
 
 Finish implementation of a customer events analyzer. Analyzer should store in memory two
